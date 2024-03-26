@@ -11,7 +11,9 @@ This repository contains the code and documentation for Assignment #2 on Artific
 
 ## Installation
 1. Clone the repository: `git clone https://github.com/bilal-akbar-9/assignment-2.git`
-2. Install the required dependencies: `pip install -r requirements.txt`
+2. Create a new python env (optional): `python -m venv env`
+3. Activate the python env (optional): `source env/bin/activate` for Linux or `.\env\Scripts\activate` for Windows.
+4. Install the required dependencies: `pip install -r requirements.txt`
 
 ## Usage
 1. Navigate to the project directory: `cd assignment-2`
