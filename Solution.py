@@ -6,6 +6,7 @@ from keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 import tensorflow as tf
+import time
 
 # Globals
 population_size = 10
@@ -35,7 +36,7 @@ y = labels
 
 
 # Define the neural network architecture
-n_outputs = 2 #The number of emotion classes
+n_outputs = 2  # The number of emotion classes
 inputd = X.shape[1]
 def build_model(input_dim, n_outputs):
     model = Sequential()
@@ -81,6 +82,7 @@ def fitness(individual):
 def create_initial_population():
     return numpy.random.randint(2, size=(population_size, total_genes))
 
+start_time = time.time()
 
 initial_population = create_initial_population()
 
@@ -109,6 +111,30 @@ def mutation(individual):
     # if the gene is 0, change it to 1 and vice versa
     individual[mutation_point] = 1 - individual[mutation_point]
     return individual
+
+
+def print_feature_names(best_chromosome):
+    # Ask the user if they want to print the names of the features
+    choice = input("\nDo you want to print the names of the features? (yes/no): ").lower()
+
+    if choice == "yes":
+        # Get the indices of selected features (where the gene is 1)
+        selected_indices = [
+            index for index, gene in enumerate(best_chromosome) if gene == 1
+        ]
+
+        feature_names = [
+            f"Feature {index + 1} ({data.columns[index]})" for index in selected_indices
+        ]
+
+        # Print the names of the selected features
+        print("Names of the selected features:")
+        for i in range(0, len(feature_names), 4):
+            print("\t".join(feature_names[i:i+4]))
+    elif choice == "no":
+        print("No feature names will be printed.")
+    else:
+        print("Invalid choice. No feature names will be printed.")
 
 
 # The genetic algorithm function
@@ -155,9 +181,13 @@ def genetic_algorithm():
     best_chromosome = max(population, key=fitness)
     best_accuracy = fitness(best_chromosome)
     print(f"\nResulting chromosome of the GA function:")
-    print(f"\tBest chromosome: {best_chromosome}")
-    print(f"\tBest accuracy: {best_accuracy:.4f}")
+    print(f"Best chromosome: {best_chromosome}")
+    print(f"Best accuracy: {best_accuracy:.4f}")
+    end_time = time.time()
+    print(f"\nTime taken: {end_time - start_time:.2f} seconds")
     return best_chromosome, best_accuracy
 
 
-genetic_algorithm()
+# Run the genetic algorithm
+best_chromosome, best_accuracy = genetic_algorithm()
+print_feature_names(best_chromosome)
