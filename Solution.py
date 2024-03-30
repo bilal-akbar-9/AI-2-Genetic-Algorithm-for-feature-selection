@@ -89,16 +89,22 @@ initial_population = create_initial_population()
 
 # The selection function
 def selection(population, fitnesses, total_fitness):
-    probabilities = [fitness / total_fitness for fitness in fitnesses]
-
-    selected_index = numpy.random.choice(len(population), p=probabilities)
-    selected_individual = population[selected_index]
-
-    return selected_individual
+    #Get a random value between 0 and the total fitness
+    random_value = random.uniform(0, total_fitness)
+    #Calculate the cumulative probability
+    cumulative_probability = 0
+    for index, fitness_value in enumerate(fitnesses):
+        cumulative_probability += fitness_value
+        #If the cumulative probability is greater than the random value, select the individual
+        if cumulative_probability >= random_value:
+            break
+    return population[index]
+        
 
 
 # The crossover function
 def crossover(parent1, parent2):
+    # Get a random crossover point
     crossover_point = random.randint(1, total_genes - 1)
     # child is the first part of parent1 and the second part of parent2
     child = numpy.concatenate((parent1[:crossover_point], parent2[crossover_point:]))
@@ -107,9 +113,12 @@ def crossover(parent1, parent2):
 
 # The mutation function
 def mutation(individual):
+    # Get a random mutation point
     mutation_point = random.randint(0, total_genes - 1)
-    # if the gene is 0, change it to 1 and vice versa
-    individual[mutation_point] = 1 - individual[mutation_point]
+    if (individual[mutation_point] == 0):
+        individual[mutation_point] = 1
+    else:
+        individual[mutation_point] = 0
     return individual
 
 
@@ -142,9 +151,7 @@ def genetic_algorithm():
     population = initial_population
     print("Initial population:")
     count = 0
-    print(f"population[0] fitness: {fitness(population[0]):.4f}")
-    print(f"population[0] fitness: {fitness(population[0]):.4f}")
-
+    
     for i in range(total_generations):
         # Calculate fitness for each individual in the population
         fitnesses = [fitness(individual) for individual in population]
